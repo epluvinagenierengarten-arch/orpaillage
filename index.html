@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orpaillage en Guyane</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css" />
+    <style>
+
+
+        body {
+            font-weight: 300;
+            color: #1A1A18;
+            background-color: #F2F0EF;
+            font-size: 17px;
+        }
+
+        img { 
+            display: block; 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+        }
+
+        header {
+            position: sticky; /*permet de laisser le bandeau en haut*/
+            top: 0;
+            z-index: 100; /*permet de laisser le bandeau en haut*/
+            background-color: #F2F0EF;
+            border-bottom: 2px solid #1F3D2B;
+        }
+
+        .bandeau {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 18px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .bandeau .logo {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1F3D2B;
+            text-decoration: none;
+        }
+
+        .bandeau nav a {
+            font-size: 14px;
+            font-weight: 400;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color:#1F3D2B;
+            text-decoration: none;
+            position: relative;
+            padding: 5px;
+            transition: color 0.2s;
+        }
+
+        .bandeau nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 0; height: 1.5px;
+            background-color:#C8A84B;
+            transition: width 0.3s ease;
+        }
+
+        .bandeau nav a:hover { 
+            color:#C8A84B; 
+        }
+
+        .bandeau nav a:hover::after { 
+            width: 100%; 
+        }
+
+        .presentation {
+            max-width: 1100px;
+            margin: 80px auto 100px; /* boîte centrée horizontalement */
+            /* marge nulle en haut et en bas */
+            padding: 40px 40px;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            grid-template-rows: auto auto;
+            gap: 40px 64px;
+            align-items: center;
+            border-bottom: 2px solid #1F3D2B;
+        }
+
+        .img_presentation {
+            overflow: hidden;
+            border-radius: 4px;
+            border: 2px solid #1F3D2B;
+            background-color: #E8E2D4;
+        }
+
+        .presentation .texte_presentation {
+            grid-column: 2;
+            grid-row: 1;
+        }
+
+        .presentation .texte_presentation h2 {
+            display: block;
+            font-size: 36px;
+            font-weight: 700;
+            color:#1F3D2B;
+            margin-bottom: 24px;
+            line-height: 1.2;
+        }
+
+        .texte_presentation p {
+            font-size: 16px;
+            color: #4A4A44;
+            line-height: 1.85;
+        }
+
+        .btn_presentation {
+            grid-column: 2;
+            grid-row: 2;
+            align-self: start;
+        }
+
+        .btn_presentation button {
+            background-color:#C8A84B;
+            color: #F2F0EF;
+            border: 2px solid #C8A84B;
+            border-radius: 40px;
+            padding: 14px 32px;
+            font-size: 15px;
+            font-weight: 400;
+            letter-spacing: 0.04em;
+            cursor: pointer;
+            transition: background-color 0.25s, color 0.25s, border-color 0.25s;
+        }
+
+        .btn_presentation button:hover {
+            background-color: #C8A84B;
+            border-color: #C8A84B;
+            color:#1F3D2B;
+        }
+
+        .prblm {
+            padding: 80px 40px;
+            background-color: #F2F0EF;
+            border-bottom: 2px solid #1F3D2B;
+        }
+
+        .prblm__inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+
+        .prblm .texte_presentation {
+            background-color: #E8E2D4;
+            border-radius: 12px;
+            padding: 40px 36px;
+            min-height: 340px;
+            display: flex;
+            align-items: center;
+        }
+
+        .prblm .texte_presentation p {
+            color: #4A4A44;
+            font-size: 16px;
+            line-height: 1.85;
+        }
+
+        .prblm__photos {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .prblm_img {
+            width: 100%;
+            aspect-ratio: 16 / 7;
+            border-radius: 12px;
+            overflow: hidden;
+            background-color: #E8E2D4;
+            border: 2px solid transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #4A4A44;
+            letter-spacing: 0.05em;
+            transition: border-color 0.2s;
+        }
+
+        .chiffre_cle {
+            max-width: 1100px;
+            margin: 60px auto 80px;
+            padding: 0 40px;
+        }
+
+        .chiffre_cle__card {
+            border: 2px solid #1F3D2B;
+            border-radius: 14px;
+            padding: 28px 32px 40px;
+            background-color: #F2F0EF;
+        }
+
+        .chiffre_cle__titre {
+            font-size: 14px;
+            font-weight: 400;
+            color: #1F3D2B;
+            letter-spacing: 0.06em;
+            margin-bottom: 32px;
+        }
+
+        .chiffre_cle__grille {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .cc {
+            padding: 8px 32px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .cc:not(:last-child) {
+            border-right: 1.5px solid #1F3D2B;
+        }
+
+        .cc__cercle {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background-color: #2E5C41;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .icones {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+        }
+
+        .cc__number {
+            font-size: 24px;
+            font-weight: 400;
+            text-transform: uppercase;
+            color: #1F3D2B;
+            text-align: center;
+            line-height: 1.3;
+        }
+
+        .cc__label {
+            font-size: 13px;
+            font-weight: 400;
+            color: #4A4A44;
+            text-align: center;
+        }
+
+        .section-carte {
+            position: relative;
+            margin: 0 0 80px;
+            overflow: hidden;
+        }
+
+        .section-carte__bg {
+            width: 100%;
+            height: 420px;
+            background-color: #E8E2D4;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-carte__bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.75;
+        }
+
+        /* Overlay sombre */
+        .section-carte__bg::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to right, rgba(31,61,43,0.7) 0%, rgba(31,61,43,0.1) 60%);
+        }
+
+        .section-carte__content {
+            position: absolute;
+            inset: 0;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 40px;
+            display: flex;
+            align-items: center;
+            gap: 60px;
+            z-index: 2;
+        }
+
+        .section-carte__texte {
+            background-color: rgba(242,240,239,0.92);
+            border-radius: 12px;
+            padding: 32px 36px;
+            max-width: 340px;
+            flex-shrink: 0;
+        }
+
+        .section-carte__texte p {
+            font-size: 15px;
+            color: #4A4A44;
+            line-height: 1.8;
+        }
+
+        .section-carte__btn {
+            background-color: #C8A84B;
+            color: #1F3D2B;
+            border: none;
+            border-radius: 40px;
+            padding: 14px 32px;
+            font-size: 15px;
+            font-weight: 400;
+            letter-spacing: 0.04em;
+            cursor: pointer;
+            transition: background-color 0.25s, transform 0.2s;
+            white-space: nowrap;
+        }
+
+        .section-carte__btn:hover {
+            background-color: #E8D48A;
+            transform: translateY(-2px);
+        }
+
+        .section-3d {
+            max-width: 1100px;
+            margin: 0 auto 80px;
+            padding: 0 40px;
+        }
+        .section-3d .swiper {
+            border: 2px solid #1F3D2B;
+            border-radius: 14px;
+            overflow: hidden;
+        }
+
+        .section-3d .swiper-slide {
+            display: flex;
+            align-items: stretch;
+            min-height: 260px;
+            background: #F2F0EF;
+        }
+        .slide-3d-box {
+            width: 260px;
+            min-height: 220px;
+            flex-shrink: 0;
+            background-color: #2E5C41;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #F2F0EF;
+            font-size: 13px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            gap: 10px;
+        }
+
+        .slide-3d-box span { 
+            opacity: 0.7; 
+            font-size: 11px; 
+        }
+
+        .slide-texte {
+            flex: 1; 
+            padding: 32px 36px;
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center;
+        }
+
+        .slide-texte h3 { 
+            font-size: 20px; 
+            font-weight: 700; 
+            color: #1F3D2B; 
+            margin: 0 0 12px; 
+        }
+
+        .slide-texte p { 
+            font-size: 15px; 
+            color: #4A4A44; 
+            line-height: 1.8; 
+            margin: 0; 
+        }
+
+        .slide-numero { 
+            font-size: 11px; 
+            letter-spacing: 0.1em; 
+            color: #C8A84B; 
+            text-transform: uppercase; 
+            margin-bottom: 8px; 
+        }
+
+        .section-3d .swiper-button-next,
+        .section-3d .swiper-button-prev {
+            width: 44px; 
+            height: 44px;
+            color: #C8A84B;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .section-3d .swiper-button-next:hover,
+        .section-3d .swiper-button-prev:hover { 
+            background-color: #1F3D2B; 
+            color: #F2F0EF; 
+        }
+
+        .section-3d .swiper-button-next::after,
+        .section-3d .swiper-button-prev::after { 
+            font-size: 14px; 
+            font-weight: 700; 
+        }
+
+        .swiper-outer { 
+            padding-bottom: 48px; 
+            position: relative; 
+        }
+
+        .section-3d .swiper-pagination-bullet { 
+            width: 10px; 
+            height: 10px; 
+            background-color: #D4E3D8; 
+            opacity: 1; 
+        }
+
+        .section-3d .swiper-pagination-bullet-active { 
+            background-color: #1F3D2B; 
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            background-color: #1F3D2B;
+            color: #D4E3D8;
+            border-top: 3px solid #C8A84B;
+            padding: 60px 40px;
+        }
+
+        .footer__inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            align-items: start;
+        }
+
+        .footer__liens {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .footer__liens a {
+            font-size: 14px;
+            color:#D4E3D8;
+            text-decoration: none;
+            letter-spacing: 0.04em;
+            transition: color 0.2s;
+        }
+
+        .footer__liens a:hover { color: #C8A84B; }
+
+        .footer__logo {
+            text-align: center;
+            font-size: 22px;
+            font-weight: 700;
+            color: #F2F0EF;
+            letter-spacing: 0.04em;
+        }
+
+        .footer__social {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: flex-end;
+        }
+
+        .footer__social a {
+            font-size: 14px;
+            color: #D4E3D8;
+            text-decoration: none;
+            letter-spacing: 0.04em;
+            transition: color 0.2s;
+        }
+
+        .footer__social a:hover { 
+            color:#C8A84B; 
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .presentation { animation: fadeUp 0.7s ease 0.1s both; }
+        .prblm        { animation: fadeUp 0.7s ease 0.2s both; }
+        .chiffre_cle  { animation: fadeUp 0.7s ease 0.3s both; }
+        .section-carte { animation: fadeUp 0.7s ease 0.4s both; }
+        .section-3d   { animation: fadeUp 0.7s ease 0.5s both; }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="bandeau">
+            <a href="" class="logo">Orpaillage Guyane</a>
+            <nav>
+                <a href="">Notre équipe</a>
+                <a href="">Nos solutions</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+
+        <div class="presentation">
+            <div class="img_presentation">
+                <img src="images/orpaillage1.png" alt="Orpaillage en Guyane">
+            </div>
+            <div class="texte_presentation">
+                <h2>La situation</h2>
+                <p>
+                    Depuis plusieurs décennies, l'orpaillage en Guyane est une activité d'extraction de l'or 
+                    qui existe sur le territoire. Une partie de cette activité est légale et encadrée, 
+                    mais une grande partie de l'or extrait provient aujourd'hui de sites clandestins installés 
+                    au milieu de la forêt amazonienne. Cet orpaillage illégal représente un enjeu majeur 
+                    pour la région, car il provoque une déforestation importante, la pollution des rivières 
+                    au mercure, et menace directement la biodiversité et les populations locales, 
+                    notamment les communautés amérindiennes. Devant cette situation, de nombreuses associations, 
+                    ONG et autorités tentent de lutter contre ce phénomène afin de protéger les écosystèmes 
+                    uniques de la Guyane et préserver ce territoire exceptionnel.
+                </p>
+            </div>
+            <div class="btn_presentation">
+                <button name="btn_presentation">
+                    Agir maintenant →
+                </button>
+            </div>
+        </div>
+
+        <div class="bandeau-logo">
+            <div class="bandeauvert"></div>
+        </div>
+
+        <div class="prblm">
+            <div class="prblm__inner">
+                <div class="texte_presentation">
+                    <p>
+                        En Guyane, l'orpaillage illégal constitue un fléau majeur, principalement alimenté par la cotation élevée de l'or sur 
+                        les marchés internationaux et la complexité inhérente à la surveillance d'un territoire vaste, dense et difficilement 
+                        accessible. L'immensité de la forêt tropicale, offre aux chercheurs d'or clandestins un refuge idéal, 
+                        rendant les opérations de contrôle des autorités extrêmement périlleuses et coûteuses.
+                        Les conséquences environnementales de cette activité sont dévastatrices et souvent irréversibles. Pour atteindre les 
+                        gisements aurifères, des hectares de forêt primaire sont rasés, provoquant une déforestation massive qui fragmente les 
+                        habitats naturels et menace la biodiversité unique de la région. Au-delà de la destruction végétale, les sols sont 
+                        profondément dégradés, perdant leur fertilité et leur structure, tandis que les cours d'eau subissent une pollution 
+                        toxique. L'utilisation intensive de mercure, nécessaire pour amalgamer l'or, entraîne une contamination durable des rivières. 
+                        Cette pollution chimique met en péril direct la faune aquatique et terrestre, qui s'infiltre dans la chaîne alimentaire, 
+                        mais aussi la santé des populations riveraines, notamment les communautés autochtones et les Businenge, 
+                        dont le mode de vie et l'alimentation dépendent étroitement de la rivière. L'exposition au mercure provoque des troubles 
+                        neurologiques graves, des maladies chroniques et affecte le développement des enfants. Ainsi, au-delà du saccage écologique, 
+                        c'est tout l'équilibre social et sanitaire de la Guyane qui est ébranlé, fragilisant durablement la résilience de l'écosystème 
+                        amazonien et compromettant l'avenir des générations futures.
+                    </p>
+                </div>
+                <div class="prblm__photos">
+                    <div class="prblm_img">
+                        <img src="images/pb_1.jpg" alt="Orpaillage en Guyane">
+                    </div>
+                    <div class="prblm_img">
+                        <img src="images/pb_2.jpg" alt="Orpaillage en Guyane">
+                    </div>
+                    <div class="prblm_img">
+                        <img src="images/pb_3.jpg" alt="Orpaillage en Guyane">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chiffre_cle">
+            <div class="chiffre_cle__card">
+                <div class="chiffre_cle__titre">Chiffres-Clés</div>
+                <div class="chiffre_cle__grille">
+
+                    <div class="cc">
+                        <div class="cc__cercle">
+                            <img class="icones" src="images/groupe.png" alt="patrouille">
+                        </div>
+                        <span class="cc__number"><bold>10</bold></span>
+                        <p>
+                            Pour lutter contre l'orpaillage illégal, 
+                            11 patrouilles par jour sont menées sur les territoires guyanais, 
+                            soit 1 323 patrouilles en 2018.
+                        </p>
+                    </div>
+
+                    <div class="cc">
+                        <div class="cc__cercle">
+                            <img class="icones" src="images/mineur.png" alt="orpailleurs">
+                        </div>
+                        <span class="cc__number"><bold>10k</bold></span>
+                        <p>
+                            Aujourd'hui, 10 000 orpailleurs clandestins sont présents en Guyane, 
+                            armés et équipés. Face à eux, 500 soldats et 260 gendarmes sont mobilisés.
+                        </p>
+                    </div>
+
+                    <div class="cc">
+                        <div class="cc__cercle">
+                            <img class="icones" src="images/or.png" alt="or">
+                        </div>
+                        <span class="cc__number"><bold>5 kg</bold></span>
+                        <p>
+                            En 2018, 5 kg d'or et 120 kg de mercure furent saisis 
+                            sur 765 sites clandestins, pour une estimation de 10 tonnes d'or 
+                            extraites chaque année.
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="section-carte">
+            <div class="section-carte__bg">
+                <img src="images/forest.jpg" alt="Carte de la Guyane">
+            </div>
+            <div class="section-carte__content">
+                <div class="section-carte__texte">
+                    <p>
+                        Découvrez la répartition géographique des sites d'orpaillage illégaux 
+                        en Guyane et l'étendue des zones impactées par cette activité clandestine.
+                    </p>
+                </div>
+                <a href="carte.html">
+                    <button class="section-carte__btn">
+                        Découvrir la carte →
+                    </button>
+                </a>
+            </div>
+        </div>
+
+        <div class="section-3d">
+            <div class="swiper-outer">
+                <div class="swiper mySwiper3D">
+                <div class="swiper-wrapper">
+
+                    <!-- Slide 1 -->
+                    <div class="swiper-slide">
+                    <div class="slide-3d-box">
+                        <div class="badge-3d"></div>
+                        <!-- Ton élément 3D ici -->
+                        <span>Élément 3D</span>
+                    </div>
+                    <div class="slide-texte">
+                        <div class="slide-numero">01 / 04</div>
+                        <h3>La déforestation</h3>
+                        <p>Les sites d'orpaillage illégaux provoquent une destruction massive de la canopée amazonienne. Les arbres sont abattus, les sols retournés et les berges des rivières dévastées pour accéder aux alluvions aurifères.</p>
+                    </div>
+                    </div>
+
+                    <!-- Slide 2 -->
+                    <div class="swiper-slide">
+                    <div class="slide-3d-box">
+                        <div class="badge-3d">⬡</div>
+                        <span>Élément 3D</span>
+                    </div>
+                    <div class="slide-texte">
+                        <div class="slide-numero">02 / 04</div>
+                        <h3>La pollution au mercure</h3>
+                        <p>L'utilisation intensive de mercure pour amalgamer l'or entraîne une contamination durable des rivières. Cette pollution met en péril la faune aquatique et la santé des populations riveraines.</p>
+                    </div>
+                    </div>
+
+                    <!-- Slide 3 -->
+                    <div class="swiper-slide">
+                    <div class="slide-3d-box">
+                        <div class="badge-3d">⬡</div>
+                        <span>Élément 3D</span>
+                    </div>
+                    <div class="slide-texte">
+                        <div class="slide-numero">03 / 04</div>
+                        <h3>L'impact sur les communautés</h3>
+                        <p>Les communautés amérindiennes et Businenge, dont le mode de vie dépend étroitement de la forêt et des rivières, subissent de plein fouet les conséquences sanitaires et sociales de l'orpaillage illégal.</p>
+                    </div>
+                    </div>
+
+                    <!-- Slide 4 -->
+                    <div class="swiper-slide">
+                    <div class="slide-3d-box">
+                        <div class="badge-3d">⬡</div>
+                        <span>Élément 3D</span>
+                    </div>
+                    <div class="slide-texte">
+                        <div class="slide-numero">04 / 04</div>
+                        <h3>La biodiversité menacée</h3>
+                        <p>La destruction des habitats naturels fragmente des écosystèmes uniques au monde. Des espèces endémiques de Guyane voient leur survie compromise par l'avancée des chantiers clandestins.</p>
+                    </div>
+                    </div>
+
+                </div>
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+                <div class="swiper-pagination"></div>
+                </div>
+            </div>
+            </div>
+
+    </main>
+
+    <footer>
+        <div class="footer__inner">
+            <a href="team.html"> l'équipe </a>
+        </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js"></script>
+    <script>
+        var swiper = new Swiper(".mySwiper3D", {  /* ← était ".mySwiper" */
+        navigation: {
+            nextEl: ".swiper-button-next",
+            prevEl: ".swiper-button-prev",
+        },
+        pagination: {
+            el: ".swiper-pagination",
+            clickable: true,
+        },
+        });
+  </script>
+</body>
+</html>
