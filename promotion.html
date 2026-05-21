@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solutions – Orpaillage Guyane</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css" />
+    <link href="style.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+    
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; font-family: 'oswald'; }
+
+        body {
+            font-family: 'oswald';
+            font-weight: 300;
+            color: #1A1A18;
+            background-color: #e5dfdc;
+            font-size: 17px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        h1, h2, h3, .section-title {
+            font-family: 'Playfair Display', serif;
+            color: #1F3D2B;
+        }
+
+        header { 
+            position: sticky; 
+            top: 0; 
+            z-index: 100; 
+            background-color: #F2F0EF; 
+            border-bottom: 2px solid #1F3D2B; 
+        }
+
+        .bandeau { 
+            max-width: 1400px; 
+            margin: 0 auto; 
+            padding: 18px 40px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+        }
+
+        .bandeau .logo { 
+            font-size: 20px; 
+            font-weight: 700; 
+            color: #1F3D2B; 
+            text-decoration: none; 
+        }
+
+        .bandeau nav { 
+            display: flex; 
+            gap: 24px; 
+        }
+
+        .bandeau nav a { 
+            font-size: 13px; 
+            font-weight: 400; 
+            text-transform: uppercase; 
+            color: #1F3D2B; 
+            text-decoration: none; 
+            position: relative; 
+            padding: 5px 0; 
+            transition: color 0.2s; 
+        }
+
+        .bandeau nav a::after { 
+            content: ''; 
+            position: absolute; 
+            bottom: 0; 
+            left: 0; 
+            width: 0; 
+            height: 1.5px; 
+            background-color: #C8A84B; 
+            transition: width 0.3s ease; 
+        }
+
+        .bandeau nav a:hover { color: #C8A84B; }
+
+        .bandeau nav a:hover::after { width: 100%; }
+
+        .marketing-section { 
+            max-width: 1100px; 
+            margin: 60px auto; 
+            padding: 0 40px; 
+        }
+
+        .section-title { 
+            font-size: 28px; 
+            font-weight: 700; 
+            margin-bottom: 20px; 
+            text-align: center; 
+        }
+
+        .section-subtitle { 
+            font-size: 16px; 
+            color: #4A4A44; 
+            text-align: center; 
+            line-height: 1.6; 
+            margin-bottom: 40px; 
+            max-width: 800px; 
+            margin-left: auto; 
+            margin-right: auto; 
+        }
+
+        .targets-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+            gap: 30px; 
+            margin-bottom: 40px; 
+        }
+
+        .target-card { 
+            background-color: #ffffff; 
+            border-radius: 8px; 
+            padding: 30px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
+        }
+
+        .target-card i { 
+            font-size: 2rem; 
+            color: #2E5C41; 
+            margin-bottom: 15px; 
+        }
+
+        .target-card h3 { 
+            font-size: 1.3rem; 
+            margin-bottom: 10px; 
+        }
+
+        .target-card p { 
+            font-size: 0.95rem; 
+            color: #555; 
+            line-height: 1.5; 
+        }
+
+        .funnel-container {
+            border-radius: 12px; 
+            padding: 40px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 20px; 
+        }
+
+        .funnel-step { 
+            background-color: #ffffff;
+            padding: 20px 25px; 
+            border-radius: 6px; 
+            display: flex; 
+            align-items: center; 
+            gap: 20px; 
+        }
+
+        .funnel-step h4 { 
+            font-size: 1.2rem; 
+            margin-bottom: 5px; 
+        }
+
+        .funnel-step p { 
+            font-size: 0.95rem; 
+            color: #4A4A44; 
+            margin: 0; 
+        }
+
+        .step-icon {
+            color: #C8A84B; 
+            width: 60px; 
+            height: 60px;
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 1.5rem; 
+            flex-shrink: 0; 
+        }
+
+        .swiper { 
+            overflow: hidden; 
+            background-color: #ffffff; 
+        }
+
+        .swiper-slide { 
+            display: flex; 
+            align-items: stretch; 
+            min-height: 260px; 
+            background: #F2F0EF; 
+        }
+
+        .slide-3d-box { 
+            width: 260px; 
+            min-height: 220px; 
+            flex-shrink: 0; 
+            background-color: #2E5C41; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            color: #F2F0EF; 
+            font-size: 13px;
+            text-transform: uppercase; 
+            gap: 10px; 
+        }
+
+        .slide-3d-box span { 
+            opacity: 0.7; 
+            font-size: 11px; 
+        }
+
+        .slide-3d-box i { 
+            font-size: 3rem; 
+            color: #C8A84B;
+        }
+
+        .slide-texte {
+            flex: 1; 
+            padding: 32px 36px; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+        }
+
+        .slide-texte h3 {
+            font-size: 22px; 
+            font-weight: 700; 
+            margin: 0 0 12px; 
+        }
+
+        .slide-texte p {
+            font-size: 16px; 
+            color: #4A4A44; 
+            line-height: 1.8; 
+            margin: 0; 
+        }
+
+        .benchmark-table-wrapper {
+            background-color: #ffffff; 
+            overflow-x: auto; 
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05); 
+        }
+
+        .benchmark-table { 
+            width: 100%; 
+            min-width: 800px; 
+            border-collapse: collapse; 
+            text-align: center; 
+        }
+
+        .benchmark-table th, .benchmark-table td { 
+            padding: 20px 15px; 
+            border-bottom: 1px solid #E8E2D4; 
+        }
+
+        .benchmark-table td:first-child, .benchmark-table th:first-child {
+            text-align: left; 
+            font-weight: 600; 
+            background-color: #F2F0EF; 
+        }
+
+        .benchmark-table th.th-campagne {
+            color: #1A1A18;
+        }
+
+        .benchmark-table th { 
+            background-color: #1F3D2B; 
+            color: #FFFFFF; 
+            font-size: 15px; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            width: 20%; 
+        }
+
+        .benchmark-table th.highlight-col { 
+            background-color: #C8A84B; 
+            font-weight: 800; 
+        }
+
+        .benchmark-table td.highlight-cell { 
+            background-color: rgba(200, 168, 75, 0.1); 
+            font-weight: 700; 
+        }
+
+        .pro-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .pro-card {
+            background-color: #ffffff;
+            border: 1px solid #E8E2D4;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .pro-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pro-card ul { 
+            list-style: none; 
+            padding-left: 0; 
+            margin-top: 15px; 
+        }
+
+        .pro-card li { 
+            margin-bottom: 10px; 
+            padding-left: 20px; 
+            position: relative; 
+        }
+
+        footer {
+            background-color: var(--color-green);
+            color: var(--color-green-light);
+            border-top: 3px solid var(--color-gold);
+            padding: 60px 40px;
+        }
+
+        .footer__inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .footer__liens {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .footer__liens a,
+        footer a {
+            font-size: 14px;
+            color: var(--color-green-light);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer__liens a:hover,
+        footer a:hover { 
+            color: var(--color-gold); 
+        }
+
+        .footer__logo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .footer__logo img {
+            width: 150px;
+            height: auto;
+            display: block;
+        }
+
+        .footer__social {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: flex-end;
+        }
+
+        .footer__social a {
+            font-size: 14px;
+            color: var(--color-green-light);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer__social a:hover { 
+            color: var(--color-gold); 
+        }
+
+        @media (max-width: 900px) {
+            .targets-grid { grid-template-columns: 1fr; }
+            .pro-grid { grid-template-columns: 1fr; }
+        }
+        </style>
+</head>
+<body>
+
+    <header>
+        <div class="bandeau">
+            <a href="index.html" class="logo"> <img src="images/logo.png" alt="logo"></a>
+            <nav>
+                <a href="team.html">Qui sommes nous ?</a>
+                <a href="solutions.html">Nos solutions</a>
+                <a href="promotion.html">Notre démarche </a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="hero">
+            <img src="images/cayenne_jpeg.jpg" alt="Bandeau équipe">
+            <div class="hero__text">
+                <h1> Notre stratégie</h1>
+            </div>
+        </div>
+
+        <section class="marketing-section">
+            <h2 class="section-title">Nos Cibles d'Acquisition</h2>
+            <p class="section-subtitle">
+                Pour faire résonner le projet "Guyane Sans Saccage", nous avons segmenté notre audience. 
+                L'objectif n'est pas de culpabiliser, mais d'éduquer par l'innovation (Tech 4 Good) en touchant des profils spécifiques.
+            </p>
+            <div class="targets-grid">
+                <div class="target-card">
+                    <i class="fas fa-gamepad"></i>
+                    <h3>Cible principale:</h3>
+                    <h4>les jeunes de 16 à 25 ans</h4>
+                    <p>Population sensible à l'écologie, aux droits humains et aux causes sociales</p>
+                </div>
+                <div class="target-card">
+                    <i class="fas fa-leaf"></i>
+                    <h3>Cible secondaire:</h3>
+                    <p>Les habitants de la Guyane française, les Associations environnementales, les militants, les enseignants et les médias</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="marketing-section">
+            <h2 class="section-title">L'Écosystème Transmédia</h2>
+            <div class="funnel-container">
+                <div class="funnel-step">
+                    <div class="step-icon"><img src="images/icone_promo1.png"></div>
+                    <div>
+                        <h4>1. Attirer</h4>
+                        <p>Diffusion de nos Reels Instagram (15s) et de notre documentaire. Objectif : Générer du trafic "Snack Content" et capter l'attention sur l'urgence en Guyane.</p>
+                    </div>
+                </div>
+                <div class="funnel-step">
+                    <div class="step-icon"><img src="images/icone_promo2.png"></i></div>
+                    <div>
+                        <h4>2. Éduquer</h4>
+                        <p>Le trafic est redirigé vers ce site web interactif. L'utilisateur explore la carte des zones polluées et évalue ses connaissances grâce au Quiz dynamique.</p>
+                    </div>
+                </div>
+                <div class="funnel-step">
+                    <div class="step-icon"><img src="images/icone_promo3.png"></div>
+                    <div>
+                        <h4>3. Engager & Convertir</h4>
+                        <p>Fidélisation via l'expérience de jeu. En parallèle, le diorama 3D physique sert de point d'ancrage lors de salons pour la levée de fonds.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="marketing-section section-3d">
+            <h2 class="section-title">Nos Leviers Transmédia par Pôle</h2>
+            <p class="section-subtitle">
+                Pour atteindre nos différentes cibles, chaque spécialité de notre agence déploie une approche spécifique. 
+                Voici comment nos 5 pôles s'articulent pour créer une campagne globale et percutante.
+            </p>
+            
+            <div class="swiper-outer">
+                <div class="swiper mySwiper3D">
+                    <div class="swiper-wrapper">
+                        
+                        <div class="swiper-slide">
+                            <div class="slide-3d-box">
+                                <img src="images/jv_promotion.png">
+                            </div>
+                            <div class="slide-texte">
+                                <h3>L'Engagement par le Jeu Vidéo</h3>
+                                <p>Pour attirer l'attention de la jeune génération, nous avons développé un jeu qui nous permettra de promouvoir 
+                                    notre cause. Il mélangera l'apprentissage et apportera un côté ludique.</p>
+                            </div>
+                        </div>
+
+                        <div class="swiper-slide">
+                            <div class="slide-3d-box">
+                                <img src="images/coding_promotion.png">
+                            </div>
+                            <div class="slide-texte">
+                                <h3>L'Interactivité Technologique</h3>
+                                <p>Nous ciblons les citoyens éco-sensibles via une plateforme web dynamique, via l'intégration technique d'une 
+                                    cartographie fluide et d'un quiz interactif.</p>
+                            </div>
+                        </div>
+
+                        <div class="swiper-slide">
+                            <div class="slide-3d-box">
+                                <img src="images/market_promotion.png">
+                            </div>
+                            <div class="slide-texte">
+                                <h3>L'Acquisition Digitale & Sociale</h3>
+                                <p>Notre stratégie de réseaux sociaux est le moteur de notre acquisition. En diffusant du "Snack Content" 
+                                    percutant et en activant les bons leviers d'influence, nous générons du trafic qualifié vers notre écosystème
+                                     web et notre jeu.</p>
+                            </div>
+                        </div>
+
+                        <div class="swiper-slide">
+                            <div class="slide-3d-box">
+                                <img src="images/3d_promotion.png">
+                            </div>
+                            <div class="slide-texte">
+                                <h3>Le Cube Interactif des Biomes</h3>
+                                <p>Pour convaincre les institutions et les donateurs, nous vulgarisons l'impact écologique avec un objet 3D 
+                                    manipulable. Ce cube interactif (où chaque face représente un biome affecté) offre une démonstration visuelle 
+                                    choc, remplaçant les longs discours.</p>
+                            </div>
+                        </div>
+
+                        <div class="swiper-slide">
+                            <div class="slide-3d-box">
+                                <img src="images/logo.png">
+                            </div>
+                            <div class="slide-texte">
+                                <h3>L'Identité Visuelle Marquante</h3>
+                                <p>Pour que la campagne "Guyane Sans Saccage" soit reconnue instantanément, notre pôle créatif a conçu une 
+                                    charte graphique forte. Cette identité unifie le site, le jeu et les réseaux, garantissant une image 
+                                    professionnelle indispensable pour crédibiliser notre ONG.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="swiper-button-next"></div>
+                    <div class="swiper-button-prev"></div>
+                    <div class="swiper-pagination"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="marketing-section">
+            <h2 class="section-title">Analyse Concurrentielle</h2>
+            <div class="benchmark-table-wrapper">
+                <table class="benchmark-table">
+                    <thead>
+                        <tr>
+                            <th class="th-campagne">Critères de campagne</th>
+                            <th>Grandes ONG (ex: WWF)</th>
+                            <th>ONG "Choc" (ex: Greenpeace)</th>
+                            <th>Associations Locales</th>
+                            <th class="highlight-col">Notre Projet (GSS)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Notoriété & Budget de départ</td>
+                            <td><i class="fas fa-check-circle check"></i> Très Élevé</td>
+                            <td><i class="fas fa-check-circle check"></i> Élevé</td>
+                            <td><i class="fas fa-times-circle cross"></i> Très Faible</td>
+                            <td class="highlight-cell"><i class="fas fa-minus-circle neutral"></i> En lancement</td>
+                        </tr>
+                        <tr>
+                            <td>Ton de la communication</td>
+                            <td><i class="fas fa-minus-circle neutral"></i>Institutionnel / Factuel</td>
+                            <td><i class="fas fa-minus-circle neutral"></i>Anxiogène / Culpabilisant</td>
+                            <td><i class="fas fa-minus-circle neutral"></i>Expertise Terrain</td>
+                            <td class="highlight-cell"><i class="fas fa-check-circle check"></i>Éducatif & Gamifié</td>
+                        </tr>
+                        <tr>
+                            <td>Outils Web Interactifs</td>
+                            <td><i class="fas fa-minus-circle neutral"></i> Basique</td>
+                            <td><i class="fas fa-minus-circle neutral"></i> Basique</td>
+                            <td><i class="fas fa-times-circle cross"></i> Absent</td>
+                            <td class="highlight-cell"><i class="fas fa-check-circle check"></i> Cartographie & Quiz</td>
+                        </tr>
+                        <tr>
+                            <td>Vulgarisation par la 3D</td>
+                            <td><i class="fas fa-times-circle cross"></i> Non</td>
+                            <td><i class="fas fa-times-circle cross"></i> Non</td>
+                            <td><i class="fas fa-times-circle cross"></i> Non</td>
+                            <td class="highlight-cell"><i class="fas fa-check-circle check"></i> Oui (Diorama Physique)</td>
+                        </tr>
+                        <tr>
+                            <td>Acquisition via le Jeu Vidéo</td>
+                            <td><i class="fas fa-times-circle cross"></i> Non</td>
+                            <td><i class="fas fa-times-circle cross"></i> Non</td>
+                            <td><i class="fas fa-times-circle cross"></i> Non</td>
+                            <td class="highlight-cell"><i class="fas fa-check-circle check"></i> Oui </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer__inner">
+            <div class="footer__liens">
+                <a href="team.html">L'équipe</a>
+                <a href="solutions.html">Nos solutions</a>
+                <a href="carte.html">La carte</a>
+            </div>
+            <div class="footer__logo"><a class="logo_footer"><img src="images/logo_footer.png" alt="logo_footer"></a></div>
+            <div class="footer__social">
+                <a href="#">Mentions légales</a>
+                <a href="#">Contact</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script>
+        // Initialisation du Slider 3D
+        var swiper = new Swiper(".mySwiper3D", {
+            loop: true, 
+            navigation: {
+                nextEl: ".swiper-button-next",
+                prevEl: ".swiper-button-prev",
+            },
+            pagination: {
+                el: ".swiper-pagination",
+                clickable: true,
+            },
+        });
+    </script>
+</body>
+</html>

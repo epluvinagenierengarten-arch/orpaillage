@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solutions – Orpaillage Guyane</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css" />
+    <link href="style.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="bandeau">
+            <a href="index.html" class="logo"> <img src="images/logo.png" alt="logo"></a>
+            <nav>
+                <a href="team.html">Qui sommes nous ?</a>
+                <a href="solutions.html">Nos solutions</a>
+                <a href="promotion.html">Notre démarche </a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="diorama-banner">
+        <div class="diorama-banner__inner">
+            <h1>Notre diorama</h1>
+        </div>
+    </div>
+
+    <main class="model-viewer_3d">
+    <div class="diorama-layout">
+        <model-viewer
+            alt="Diorama orpaillage"
+            src="images/Diorama_site_v8.glb"
+            shadow-intensity="1"
+            camera-controls
+            touch-action="pan-y">
+        </model-viewer>
+        <div class="diorama-intro">
+            <p>Ce diorama 3D plonge au cœur de l'orpaillage en Guyane française. Explorez les techniques d'extraction aurifère, les écosystèmes forestiers impactés et les enjeux environnementaux et humains liés à cette activité. Faites pivoter et zoomez librement sur la scène.</p>
+        </div>
+    </div>
+</main>
+
+    <footer>
+        <div class="footer__inner">
+            <div class="footer__liens">
+                <a href="team.html">L'équipe</a>
+                <a href="solutions.html">Nos solutions</a>
+                <a href="carte.html">La carte</a>
+            </div>
+            <div class="footer__logo"><a class="logo_footer"><img src="images/logo_footer.png" alt="logo"></a></div>
+            <div class="footer__social">
+                <a href="#">Mentions légales</a>
+                <a href="#">Contact</a>
+            </div>
+        </div>
+    </footer>
+
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.2.0/model-viewer.min.js"></script>
+</body>
+</html>

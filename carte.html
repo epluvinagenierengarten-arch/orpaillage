@@ -1,11 +1,1021 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Carte Interactive & Quiz - Orpaillage Guyane</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+    <style>
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: 'oswald'; 
+            font-weight: 300; 
+            color: #1A1A18; 
+            background-color: #F2F0EF; 
+            font-size: 17px; 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 100vh; 
+            overflow: auto; 
+        }
+
+        header {
+            position: sticky; 
+            top: 0; 
+            z-index: 100; 
+            background-color: #F2F0EF; 
+            border-bottom: 2px solid #1F3D2B; 
+        }
+        .bandeau {
+            max-width: 1400px; 
+            margin: 0 auto; 
+            padding: 18px 40px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+        }
+        .bandeau .logo {
+            font-size: 20px; 
+            font-weight: 700; 
+            color: #1F3D2B; 
+            text-decoration: none; 
+        }
+        .bandeau nav {
+            display: flex; 
+            gap: 24px; 
+        }
+        .bandeau nav a {
+            font-size: 13px; 
+            font-weight: 400; 
+            text-transform: uppercase; 
+            color: #1F3D2B; 
+            text-decoration: none; 
+            position: relative; 
+            padding: 5px 0; 
+            transition: color 0.2s; 
+        }
+        .bandeau nav a::after {
+            content: ''; 
+            position: absolute; 
+            bottom: 0; 
+            left: 0; 
+            width: 0; 
+            height: 1.5px; 
+            background-color:#C8A84B; 
+            transition: width 0.3s ease; 
+        }
+        .bandeau nav a:hover { color: #C8A84B; }
+        .bandeau nav a:hover::after { width: 100%; }
+
+        .container {
+            display: flex; 
+            padding: 50px 30px; 
+            max-width: 1400px; 
+            margin: 0 auto; 
+            width: 100%; 
+            gap: 50px; 
+            position: relative; }
+        .map-section { 
+            flex: 2; 
+            background-color: #f4f4f4; 
+            border: 1px solid #ddd; 
+            border-radius: 8px; 
+            position: relative; 
+            z-index: 1; }
+        #map { 
+            height: 600px; 
+            width: 100%; 
+            border-radius: 8px; 
+            z-index: 1; }
+
+        /* Légende personnalisée sur la carte */
+        .info-legend { 
+            background: white; 
+            padding: 10px 15px; 
+            border-radius: 5px; 
+            box-shadow: 0 0 15px rgba(0,0,0,0.2); 
+            font-family: 'Segoe UI', sans-serif; 
+            font-size: 13px; 
+            line-height: 1.5; color: #333; 
+        }
+        .info-legend i { 
+            width: 15px; 
+            height: 15px; 
+            float: left; 
+            margin-right: 8px; 
+            border-radius: 50%; 
+            opacity: 0.8; 
+        }
+
+        .controls-section { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 20px; 
+            max-width: 350px; 
+        }
+        
+        /* boutons filtres*/
+        .map-filters { 
+            display: flex; 
+            gap: 10px; 
+            margin-bottom: 15px; 
+            justify-content: center; 
+            flex-wrap: wrap; 
+        }
+        .filter-btn { 
+            background-color: #F2F0EF; 
+            border: 2px solid #1F3D2B; 
+            color: #1F3D2B; 
+            padding: 8px 16px; 
+            border-radius: 20px; 
+            font-family: 'Lato', sans-serif; 
+            font-size: 14px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+        }
+        .filter-btn:hover { background-color: #E8E2D4; }
+
+        .filter-btn.active {
+            background-color: #1F3D2B; 
+            color: #C8A84B; 
+        }
+
+        /* menu déroulant */
+        .map-selectors { 
+            display: flex; 
+            gap: 15px; 
+            margin-bottom: 20px; 
+            justify-content: center; 
+            flex-wrap: wrap; 
+        }
+        .map-selectors select { 
+            padding: 10px 15px; 
+            border-radius: 8px; 
+            border: 2px solid #1F3D2B; 
+            background-color: #F2F0EF; 
+            color: #1F3D2B; 
+            font-family: 'Lato', sans-serif; 
+            font-size: 14px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            outline: none; 
+            width: 280px; 
+            transition: all 0.3s ease; 
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+        }
+        .map-selectors select:hover, .map-selectors select:focus { 
+            border-color: #C8A84B; 
+            background-color: #ffffff; 
+        }
+
+        /* bannière hero */
+        .hero-banner {
+            position: relative; 
+            width: 100%; 
+            height: 350px; 
+            background-image: url(image/cayenne\ jpeg.jpg);
+            background-size: cover; 
+            background-position: center; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            text-align: center; 
+            padding: 0 20px;
+            margin-bottom: 20px; 
+        }
+
+        /* Calque sombre pour faire ressortir le texte blanc */
+        .hero-banner::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.45); 
+            z-index: 0;
+        }
+
+        .hero-banner div {
+            position: relative;
+            z-index: 1000; 
+        }
+
+        .hero-banner h1 { 
+            color: #FFFFFF; 
+            font-size: 3.5rem; 
+            font-weight: 700; 
+            font-family: 'Playfair Display', serif; 
+            margin-bottom: 10px; 
+        }
+
+        .hero-banner p { 
+            color: #C8A84B; 
+            font-size: 1.2rem; 
+            font-family: 'Lato', sans-serif; 
+            text-transform: uppercase; 
+            letter-spacing: 3px; 
+        }
+
+        /* Texte sous la carte*/
+        .crise-explication {
+            position: relative; 
+            clear: both; 
+            max-width: 900px; 
+            margin: 40px auto 80px auto; 
+            padding: 0 30px; 
+            z-index: 10; 
+        }
+        .crise-explication h2 { 
+            font-family: 'Playfair Display', serif; 
+            color: #1F3D2B; 
+            font-size: 26px; 
+            margin-bottom: 20px; 
+            text-align: center; 
+        }
+        .crise-explication p { 
+            font-family: 'Lato', sans-serif; 
+            font-size: 16px; 
+            color: #4A4A44; 
+            line-height: 1.8; 
+        }
+        .crise-explication strong { 
+            color: #2E5C41; 
+            font-weight: 700; 
+        }
+
+        /* boite description des villes/ aeroport/ sites */
+        .description-box { 
+            background-color: #ffffff; 
+            border-left: 5px solid #557d5e; 
+            padding: 20px; 
+            border-radius: 6px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08); 
+            color: #1A1A18; 
+            animation: fadeIn 0.4s ease-in-out; 
+        }
+        .description-box h3 { 
+            color: #1F3D2B; 
+            margin-bottom: 10px; 
+            font-size: 1.3rem; 
+            font-weight: 700; 
+        }
+        .description-box p { 
+            font-size: 1rem; 
+            line-height: 1.6; 
+            font-family: 'Segoe UI', sans-serif; 
+        }
+
+        /* Quiz*/
+
+        .section-quiz {
+            padding: 80px 40px; 
+            border-top: 2px solid #1F3D2B; 
+            background-color: #F2F0EF; 
+        }
+        .section-quiz__inner { 
+            max-width: 1100px; 
+            margin: 0 auto; 
+            display: grid; 
+            grid-template-columns: 1fr 1.6fr; 
+            gap: 64px; 
+            align-items: start; 
+        }
+
+        .section-quiz__intro { 
+            position: sticky; 
+            top: 100px; 
+        }
+        .section-quiz__label { 
+            font-size: 12px; 
+            font-weight: 400; 
+            letter-spacing: 0.12em; 
+            text-transform: uppercase; 
+            color: #C8A84B; 
+            margin-bottom: 16px; 
+        }
+
+        .section-quiz__intro h2 { 
+            font-size: 32px; 
+            font-weight: 700; 
+            color: #1F3D2B; 
+            line-height: 1.25; 
+            margin-bottom: 20px; 
+            font-family: 'Segoe UI', sans-serif; 
+        }
+
+        .section-quiz__intro p { 
+            font-size: 15px; 
+            color: #4A4A44; 
+            line-height: 1.85; 
+            margin-bottom: 28px; 
+            font-family: 'Segoe UI', sans-serif; 
+        }
+
+        .quiz-score-global { 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 10px; 
+            background-color: #2E5C41; 
+            color: #D4E3D8; 
+            border-radius: 10px; 
+            padding: 12px 20px; 
+            font-size: 14px; 
+            font-family: 'Segoe UI', sans-serif; 
+        }
+        .quiz-score-global strong { 
+            font-size: 22px; 
+            color: #C8A84B; 
+            font-weight: 700; 
+        }
+        
+        .quiz-widget { 
+            background-color: #ffffff; 
+            border: 2px solid #1F3D2B; 
+            border-radius: 14px; 
+            padding: 32px 36px; 
+            font-family: 'Segoe UI', sans-serif; 
+        }
+        .quiz-progress-wrap { 
+            background-color: #D4E3D8; 
+            border-radius: 99px; 
+            height: 5px; 
+            margin-bottom: 28px; 
+            overflow: hidden; 
+        }
+        .quiz-progress-bar { 
+            height: 100%; 
+            background-color: #C8A84B; 
+            border-radius: 99px; 
+            transition: width 0.4s ease; 
+        }
+        .quiz-question-num { 
+            font-size: 11px; 
+            letter-spacing: 0.12em; 
+            text-transform: uppercase; 
+            color: #C8A84B; 
+            margin-bottom: 10px; 
+        }
+        .quiz-question-text { 
+            font-size: 17px; 
+            font-weight: 600; 
+            color: #1F3D2B; 
+            line-height: 1.5; 
+            margin-bottom: 24px; 
+        }
+        .quiz-answers { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 10px; 
+        }
+        .quiz-answer-btn { 
+            background-color: #F2F0EF; 
+            border: 1.5px solid #D4D0C8; 
+            border-radius: 8px; 
+            padding: 12px 16px; 
+            font-size: 15px; 
+            font-family: inherit; 
+            color: #1A1A18; 
+            text-align: left; 
+            cursor: pointer; 
+            transition: background-color 0.15s, 
+            border-color 0.15s, color 0.15s; 
+            line-height: 1.4; 
+        }
+
+        .quiz-answer-btn:hover:not(:disabled) { 
+            background-color: #E8E2D4; 
+            border-color: #1F3D2B; 
+            color: #1F3D2B; 
+        }
+
+        .quiz-answer-btn:disabled { cursor: default; }
+
+        .quiz-answer-btn.correct {
+            background-color: #D4E3D8; 
+            border-color: #2E5C41; 
+            color: #1F3D2B; 
+            font-weight: 600; 
+        }
+        .quiz-answer-btn.incorrect { 
+            background-color: #F5DDD9; 
+            border-color: #B84A3A; 
+            color: #7A2018; 
+            font-weight: 600; 
+        }
+        .quiz-answer-btn.reveal-correct { 
+            background-color: #D4E3D8; 
+            border-color: #2E5C41; 
+            color: #1F3D2B; 
+        }
+        .quiz-feedback { 
+            margin-top: 16px; 
+            padding: 10px 16px; 
+            border-radius: 8px; 
+            font-size: 14px; 
+            font-weight: 600; 
+            display: none; 
+        }
+        .quiz-feedback.good { 
+            background-color: #D4E3D8; 
+            color: #1F3D2B; 
+        }
+        .quiz-feedback.bad  { 
+            background-color: #F5DDD9; 
+            color: #7A2018; 
+        }
+        .quiz-next-btn { 
+            width: 100%; 
+            margin-top: 20px; 
+            padding: 13px 24px; 
+            border-radius: 40px; 
+            background-color: #C8A84B; 
+            color: #1F3D2B; 
+            font-size: 15px; 
+            font-family: inherit; 
+            font-weight: 600; 
+            letter-spacing: 0.04em; 
+            border: none; 
+            cursor: pointer; 
+            display: none; 
+            transition: background-color 0.25s, 
+            transform 0.2s; 
+        }
+        .quiz-next-btn:hover { 
+            background-color: #E8D48A; 
+            transform: translateY(-2px); 
+        }
+        .quiz-result { 
+            text-align: center; 
+            padding: 20px 0; 
+        }
+        .quiz-result__score { 
+            font-family: 'Playfair Display', serif; 
+            font-size: 52px; 
+            color: #1F3D2B; 
+            margin-bottom: 6px; 
+        }
+        .quiz-result__pct { 
+            font-size: 14px; 
+            letter-spacing: 0.08em; 
+            text-transform: uppercase; 
+            color: #C8A84B; 
+            margin-bottom: 16px; 
+        }
+        .quiz-result__msg { 
+            font-size: 15px; 
+            color: #4A4A44; 
+            line-height: 1.7; 
+            margin-bottom: 28px; 
+        }
+        .quiz-restart-btn { 
+            background-color: #1F3D2B; 
+            color: #F2F0EF; 
+            border: 2px solid #1F3D2B; 
+            border-radius: 40px; 
+            padding: 13px 32px; 
+            font-size: 15px; 
+            font-family: inherit; 
+            font-weight: 400; 
+            letter-spacing: 0.04em; 
+            cursor: pointer; 
+            transition: background-color 0.25s, color 0.25s; 
+        }
+
+        .quiz-restart-btn:hover { 
+            background-color: #F2F0EF; 
+            color: #1F3D2B; 
+        }
+
+        /* footer */
+        footer { 
+            background-color: #1F3D2B; 
+            color: #D4E3D8; 
+            border-top: 3px solid #C8A84B; 
+            padding: 30px 40px; 
+            margin-top: auto; 
+        }
+
+        .footer__inner { 
+            max-width: 1400px; 
+            margin: 0 auto; 
+        }
+
+        .footer__inner a { 
+            font-size: 14px; 
+            color: #D4E3D8; 
+            text-decoration: none; 
+            transition: color 0.2s; 
+            font-family: 'Lato', sans-serif; 
+        }
+
+        .footer__inner a:hover { color: #C8A84B; }
+        
+        @media (max-width: 800px) {
+            .section-quiz__inner { grid-template-columns: 1fr; gap: 30px; }
+            .section-quiz__intro { position: relative; top: 0; }
+            .container { flex-direction: column; }
+            .controls-section { max-width: 100%; }
+        }
+
+    </style>
 </head>
 <body>
-    
+
+    <header>
+        <div class="bandeau">
+            <a href="index.html" class="logo"> <img src="images/logo.png" alt="logo"></a>
+            <nav>
+                <a href="team.html">Qui sommes nous ?</a>
+                <a href="solutions.html">Nos solutions</a>
+                <a href="promotion.html">Notre démarche </a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="hero">
+        <img src="images/bandeau_carte.jpeg" alt="Bandeau équipe">
+        <div class="hero__text">
+            <h1>La carte et le quizz</h1>
+        </div>
+    </div>
+
+    <main class="container">
+        <div class="map-section" id="map"></div>
+            
+        <aside class="controls-section">
+            <div class="map-filters">
+                <button class="filter-btn active" onclick="filtrerCarte('tout', this)">Tout afficher</button>
+                <button class="filter-btn" onclick="filtrerCarte('sites', this)">Sites miniers</button>
+                <button class="filter-btn" onclick="filtrerCarte('aeroports', this)">Aéroports</button>
+                <button class="filter-btn" onclick="filtrerCarte('villes', this)">Villes</button>
+            </div>
+
+            <div class="map-selectors">
+                <select id="select-sites" onchange="allerVersLieu('site', this.value)">
+                    <option value="" disabled selected>Explorer un site minier...</option>
+                </select>
+                
+                <select id="select-aeroports" onchange="allerVersLieu('airport', this.value)">
+                    <option value="" disabled selected>Explorer un aéroport...</option>
+                </select>
+                
+                <select id="select-villes" onchange="allerVersLieu('city', this.value)">
+                    <option value="" disabled selected>Explorer une ville...</option>
+                </select>
+            </div>
+
+            <div id="description-container" class="description-box" style="display: none;">
+                <h3 id="desc-title">Nom du site</h3>
+                <p id="desc-text">Description détaillée...</p>
+            </div>
+        </aside>
+    </main>
+
+    <section class="crise-explication">
+        <h1>Comprendre la crise</h1>
+        <p>
+            Cette carte illustre la complexité de la lutte contre l'orpaillage clandestin :<br><br>
+            <strong>Désastre écologique :</strong> La pollution ruisselle depuis les sites clandestins (verts) et contamine de vastes bassins fluviaux (rouges), empoisonnant la chaîne alimentaire et les populations autochtones.<br><br>
+            <strong>Cauchemar logistique :</strong> Les aérodromes (bleus) se concentrent sur le littoral. À l'inverse, les orpailleurs prolifèrent dans le "vide" amazonien, rendant les interventions des forces de l'ordre extrêmement difficiles.<br><br>
+            <strong>Défi géopolitique :</strong> La concentration des sites à l'ouest révèle l'enjeu du fleuve Maroni. Les réseaux clandestins profitent de cette frontière avec le Suriname pour s'approvisionner.
+        </p>
+    </section>
+
+    <div class="section-quiz">
+        <div class="section-quiz__inner">
+            <div class="section-quiz__intro">
+                <div class="section-quiz__label">Quiz</div>
+                <h2>Testez vos connaissances</h2>
+                <p>
+                    Avez-vous bien compris les enjeux de l'orpaillage illégal en Guyane ? 
+                    Répondez à ces questions pour évaluer vos connaissances.
+                </p>
+                <div class="quiz-score-global" id="score-global" style="display:none;">
+                    Votre score&nbsp;: <strong id="score-display">0 / 10</strong>
+                </div>
+            </div>
+
+            <div class="quiz-widget">
+                <div class="quiz-progress-wrap">
+                    <div class="quiz-progress-bar" id="quiz-progress"></div>
+                </div>
+                <div id="quiz-body"></div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer__inner">
+            <a href="promotion.html"></a> | 
+            <a href="#">Instagram : GSS</a>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <script>
+
+        /* scripte maps*/
+        var map = L.map('map').setView([3.8, -53.6], 7);
+
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap'
+        }).addTo(map);
+
+        //  zone contaminée au mercure
+        L.circle([4.0, -54.2], { color: '#b71c1c', fillColor: '#f44336', fillOpacity: 0.35, radius: 50000 }).addTo(map).bindPopup("<b>Zone Rouge : Bassin du Maroni</b><br>Très fortement impacté par le mercure.");
+        L.circle([3.16, -52.33], { color: '#b71c1c', fillColor: '#f44336', fillOpacity: 0.35, radius: 40000 }).addTo(map).bindPopup("<b>Zone Rouge : Bassin de l'Oyapock</b>");
+        L.circle([3.2, -53.2], { color: '#b71c1c', fillColor: '#f44336', fillOpacity: 0.3, radius: 60000 }).addTo(map).bindPopup("<b>Zone Rouge : Parc Amazonien</b>");
+        L.circle([4.95, -53.04], { color: '#d32f2f', fillColor: '#ff9800', fillOpacity: 0.4, radius: 20000 }).addTo(map).bindPopup("<b>Zone Critique : Lac de Petit-Saut</b>");
+
+        // legende
+        var legend = L.control({position: 'bottomleft'});
+        legend.onAdd = function (map) {
+            var div = L.DomUtil.create('div', 'info-legend');
+            div.innerHTML += '<i style="background: #f44336"></i> Zone polluée au mercure<br>';
+            div.innerHTML += '<i style="background: #2E5C41"></i> Site minier clandestin<br>';
+            div.innerHTML += '<i style="background: #009ce0"></i> Aéroport / Aérodrome<br>';
+            div.innerHTML += '<i style="background: #FFFFFF; border: 2px solid #1A1A18; box-sizing: border-box;"></i> Ville principale';
+            return div;
+        };
+        legend.addTo(map);
+
+       //  base de données site orpaillage
+        const sitesData = {
+            "yaou": { 
+                name: "Yaou", 
+                coords: [3.606, -53.953], 
+                desc: "<b>Statut:</b> Clandestin & Historique | <b>Impact:</b> Très Élevé (Mercure) | <b>Type:</b> Primaire<br><br><b>Accès :</b> Pistes clandestines, quad et hélicoptère.<br><br><b>Contexte GSS :</b> Situé dans le secteur de Maripasoula, c'est l'un des gisements majeurs de l'ouest guyanais. Complètement gangrené par les garimpeiros (orpailleurs illégaux), ce site est au cœur de la 'zone rouge' du fleuve Maroni, illustrant la difficulté de l'État à reprendre le contrôle sur des filons très riches." 
+            },
+            "dorlin": { 
+                name: "Dorlin", 
+                coords: [3.765, -53.554], 
+                desc: "<b>Statut:</b> Clandestin (Zone de non-droit) | <b>Impact:</b> Dévastateur | <b>Type:</b> Alluvionnaire<br><br><b>Accès :</b> Fleuve, quad et marche en forêt profonde.<br><br><b>Contexte GSS :</b> Situé dans le bassin de l'Inini. Tristement célèbre pour sa violence (affrontements armés historiques), Dorlin symbolise l'insécurité totale liée à l'orpaillage illégal. Les criques y sont retournées par les pelleteuses et saturées de boues toxiques." 
+            },
+            "sophie": { 
+                name: "Sophie", 
+                coords: [3.643, -54.031], 
+                desc: "<b>Statut:</b> Clandestin | <b>Impact:</b> Élevé (Déforestation) | <b>Type:</b> Alluvionnaire<br><br><b>Accès :</b> Réseau complexe de pistes sous canopée.<br><br><b>Contexte GSS :</b> Ce placer (site de lavage d'or) situé près de la frontière ouest illustre le défi logistique des militaires. Dissimulé sous l'épaisse canopée amazonienne, il est extrêmement difficile à repérer par voie aérienne." 
+            },
+            "repentir": { 
+                name: "Repentir", 
+                coords: [3.963, -53.486], 
+                desc: "<b>Statut:</b> Clandestin | <b>Impact:</b> Modéré à Élevé | <b>Type:</b> Alluvionnaire<br><br><b>Accès :</b> Logistique de survie, ravitaillement par pirogue.<br><br><b>Contexte GSS :</b> Un site isolé au centre de la Guyane. L'exploitation sauvage y détruit les berges des criques, modifiant le cours naturel de l'eau et asphyxiant la biodiversité aquatique avec le rejet de sédiments." 
+            },
+            "boeuf-mort": { 
+                name: "Bœuf-mort", 
+                coords: [3.623, -53.208], 
+                desc: "<b>Statut:</b> Clandestin | <b>Impact:</b> Critique (Menace d'écosystème sain) | <b>Type:</b> Alluvionnaire<br><br><b>Accès :</b> Sentiers forestiers depuis les fleuves.<br><br><b>Contexte GSS :</b> Proche de Saül, une commune qui tente de vivre de l'écotourisme durable. Ce site démontre comment la fièvre de l'or menace directement les rares initiatives économiques vertes de la Guyane." 
+            },
+            "paul-isnard": { 
+                name: "Paul Isnard", 
+                coords: [4.674, -53.864], 
+                desc: "<b>Statut:</b> Historique (Infiltré par clandestins) | <b>Impact:</b> Séquelles lourdes | <b>Type:</b> Primaire et Alluvionnaire<br><br><b>Accès :</b> Longue piste en terre creusée dans la forêt (depuis Saint-Laurent).<br><br><b>Contexte GSS :</b> L'un des plus anciens secteurs miniers. Il abrite un lourd passif écologique. C'est l'exemple parfait des cicatrices indélébiles laissées par les engins de chantier sur le sol amazonien." 
+            },
+            "saint-elie": { 
+                name: "Saint-Élie", 
+                coords: [4.825, -53.284], 
+                desc: "<b>Statut:</b> Historique / Actif | <b>Impact:</b> Sévère | <b>Type:</b> Primaire<br><br><b>Accès :</b> Voie fluviale via le lac de barrage de Petit-Saut.<br><br><b>Contexte GSS :</b> Zone d'exploitation depuis le XIXe siècle. Aujourd'hui, les réseaux clandestins utilisent l'immense lac du barrage hydroélectrique tout proche pour naviguer discrètement la nuit et ravitailler les puits miniers." 
+            },
+            "eau-claire": { 
+                name: "Eau Claire", 
+                coords: [3.655, -53.181], 
+                desc: "<b>Statut:</b> Clandestin | <b>Impact:</b> Paradoxal (Destruction aquatique) | <b>Type:</b> Alluvionnaire<br><br><b>Accès :</b> Quad et pirogue.<br><br><b>Contexte GSS :</b> Malgré son nom, ce gisement illustre le fléau de la turbidité de l'eau. Les motopompes des garimpeiros aspirent et recrachent la vase, transformant des eaux autrefois cristallines en rivières boueuses et mortes." 
+            },
+            "belizon": { 
+                name: "Bélizon", 
+                coords: [4.256, -52.279], 
+                desc: "<b>Statut:</b> Clandestin | <b>Impact:</b> Élevé (Atteinte à la faune) | <b>Type:</b> Alluvionnaire<br><br><b>Accès :</b> Pistes forestières complexes.<br><br><b>Contexte GSS :</b> Situé à l'est, ce site vient rappeler une vérité cruelle de notre carte : le saccage ne se limite pas à la frontière ouest (le Maroni). Le fléau clandestin s'étend et ronge également la partie orientale de la forêt guyanaise." 
+            }
+        };
+
+        // base de données grandes villes
+        const citiesData = {
+            "cayenne": { 
+                name: "Cayenne", 
+                coords: [4.9330, -52.3300], 
+                desc: "<b>Pop:</b> ~65 000 hab. | <b>Superficie:</b> 23,6 km² | <b>Densité:</b> 2 754 hab/km²<br><br><b>Accès :</b> Pôle urbain principal, port et routes nationales.<br><br><b>Contexte GSS :</b> Capitale administrative et économique. Située sur le littoral, elle est très éloignée géographiquement des sites d'orpaillage. Ce décalage crée un contraste fort : la majorité de la population urbaine ne voit pas directement le saccage forestier qui se déroule dans l'arrière-pays." 
+            },
+            "saint-laurent": { 
+                name: "Saint-Laurent-du-Maroni", 
+                coords: [5.4976, -54.0325], 
+                desc: "<b>Pop:</b> ~50 000 hab. | <b>Superficie:</b> 4 830 km² | <b>Densité:</b> 10 hab/km²<br><br><b>Accès :</b> Route nationale N1 et carrefour fluvial sur le Maroni.<br><br><b>Contexte GSS :</b> Ville frontière avec le Suriname. C'est la porte d'entrée de l'Ouest guyanais et une plaque tournante de la logistique fluviale. Malheureusement, cette position stratégique en fait aussi un point de passage majeur pour le ravitaillement illégal des chantiers d'orpaillage." 
+            },
+            "kourou": { 
+                name: "Kourou", 
+                coords: [5.1600, -52.6499], 
+                desc: "<b>Pop:</b> ~25 000 hab. | <b>Superficie:</b> 2 160 km² | <b>Densité:</b> 11 hab/km²<br><br><b>Accès :</b> Route nationale N1, littoral atlantique.<br><br><b>Contexte GSS :</b> Ville abritant le Centre Spatial Guyanais (CSG). Elle symbolise un immense paradoxe technologique : d'un côté l'excellence aérospatiale européenne, de l'autre, à quelques dizaines de kilomètres dans les terres, une exploitation sauvage et archaïque de la forêt amazonienne." 
+            },
+            "matoury": { 
+                name: "Matoury", 
+                coords: [4.8492, -52.3235], 
+                desc: "<b>Pop:</b> ~34 000 hab. | <b>Superficie:</b> 137 km² | <b>Densité:</b> 248 hab/km²<br><br><b>Accès :</b> Périphérie de Cayenne, abrite l'Aéroport International Félix Éboué.<br><br><b>Contexte GSS :</b> Hub de transport majeur de la Guyane. C'est le point d'arrivée des forces de l'ordre luttant contre l'orpaillage (Opération Harpie), mais aussi une zone de transit parfois utilisée par les réseaux logistiques clandestins." 
+            },
+            "remire": { 
+                name: "Remire-Montjoly", 
+                coords: [4.9148, -52.2694], 
+                desc: "<b>Pop:</b> ~27 000 hab. | <b>Superficie:</b> 46 km² | <b>Densité:</b> 586 hab/km²<br><br><b>Accès :</b> Périphérie est de Cayenne.<br><br><b>Contexte GSS :</b> Zone résidentielle littorale préservée, connue pour ses plages et la ponte des tortues marines. Elle illustre la Guyane intacte que notre agence cherche à protéger, en totale opposition avec les paysages lunaires laissés par les garimpeiros dans le sud." 
+            },
+            "maripasoula-ville": { 
+                name: "Maripasoula", 
+                coords: [3.6420, -54.0320], 
+                desc: "<b>Pop:</b> ~12 000 hab. | <b>Superficie:</b> 18 360 km² | <b>Densité:</b> 0,6 hab/km²<br><br><b>Accès :</b> Isolée. Accessible uniquement par avion ou après plusieurs jours de pirogue.<br><br><b>Contexte GSS :</b> La plus vaste commune de France. Située en plein cœur du Parc Amazonien, elle est l'épicentre du conflit environnemental. Ses fleuves (le Maroni) et les communautés amérindiennes et businenge qui y vivent subissent de plein fouet l'intoxication au mercure." 
+            },
+            "mana": { 
+                name: "Mana", 
+                coords: [5.6690, -53.7790], 
+                desc: "<b>Pop:</b> ~11 000 hab. | <b>Superficie:</b> 6 333 km² | <b>Densité:</b> 1,7 hab/km²<br><br><b>Accès :</b> Route de l'Ouest, proche du fleuve Mana.<br><br><b>Contexte GSS :</b> Grande commune agricole et forestière. Les criques (petites rivières) de l'arrière-pays de Mana sont régulièrement ciblées par les chercheurs d'or, menaçant l'équilibre de la biodiversité locale." 
+            },
+            "apatou": { 
+                name: "Apatou", 
+                coords: [5.1550, -54.3430], 
+                desc: "<b>Pop:</b> ~9 500 hab. | <b>Superficie:</b> 2 020 km² | <b>Densité:</b> 4,7 hab/km²<br><br><b>Accès :</b> Route depuis Saint-Laurent-du-Maroni et voie fluviale.<br><br><b>Contexte GSS :</b> Étape charnière sur le fleuve Maroni. Les populations d'Apatou constatent quotidiennement la dégradation de l'eau (turbidité) due aux boues rejetées par les moteurs des orpailleurs situés en amont." 
+            },
+            "grand-santi-ville": { 
+                name: "Grand-Santi", 
+                coords: [4.2730, -54.3810], 
+                desc: "<b>Pop:</b> ~9 000 hab. | <b>Superficie:</b> 2 112 km² | <b>Densité:</b> 4 hab/km²<br><br><b>Accès :</b> Commune enclavée, accessible principalement par pirogue ou petit avion.<br><br><b>Contexte GSS :</b> Territoire très enclavé du fleuve Maroni. La dépendance de la population locale à la pêche rend cette zone extrêmement vulnérable à la bioaccumulation du mercure dans la chaîne alimentaire aquatique." 
+            },
+            "sinnamary-ville": { 
+                name: "Sinnamary", 
+                coords: [5.3800, -52.9600], 
+                desc: "<b>Pop:</b> ~3 000 hab. | <b>Superficie:</b> 1 340 km² | <b>Densité:</b> 2,2 hab/km²<br><br><b>Accès :</b> Route nationale N1.<br><br><b>Contexte GSS :</b> Connue pour le barrage hydroélectrique de Petit-Saut. L'immense lac de retenue du barrage est un site sensible où le mercure s'accumule dangereusement et attire des orpailleurs clandestins profitant de l'immensité du plan d'eau pour se cacher." 
+            },
+            "saint-georges-ville": { 
+                name: "Saint-Georges-de-l'Oyapock", 
+                coords: [3.9105, -51.8100], 
+                desc: "<b>Pop:</b> ~4 300 hab. | <b>Superficie:</b> 2 320 km² | <b>Densité:</b> 1,8 hab/km²<br><br><b>Accès :</b> Route nationale N2 (depuis Cayenne) et voie fluviale.<br><br><b>Contexte GSS :</b> Commune frontalière séparée du Brésil par le fleuve Oyapock. C'est l'un des principaux points chauds d'entrée illégale sur le territoire français pour les garimpeiros (chercheurs d'or brésiliens) et leur matériel." 
+            }
+        };
+
+        const cityMarkersList = {};
+        for (let key in citiesData) {
+            let city = citiesData[key];
+            let marker = L.circleMarker(city.coords, {
+                color: '#1A1A18',       
+                fillColor: '#FFFFFF',   
+                fillOpacity: 1,
+                radius: 5,
+                weight: 2
+            }).addTo(map);
+            marker.bindPopup(`<b>Ville : ${city.name}</b>`);
+            cityMarkersList[key] = marker;
+        }
+
+        const markersList = {}; 
+        var orpaillageIcon = L.icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+            iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
+        });
+
+        for (let key in sitesData) {
+            let site = sitesData[key];
+            let marker = L.marker(site.coords, {icon: orpaillageIcon}).addTo(map);
+            marker.bindPopup(`<b>Site minier : ${site.name}</b>`);
+            markersList[key] = marker; 
+        }
+
+        // bases de données aéroports
+        const airportsData = {
+            "cayenne": { 
+                name: "Aéroport Félix Éboué (Cayenne)", 
+                coords: [4.8197, -52.3619], 
+                desc: "<b>Statut:</b> Aéroport International | <b>Rôle:</b> Hub Principal Civil & Militaire<br><br><b>Accès :</b> Porte d'entrée mondiale de la Guyane.<br><br><b>Contexte GSS :</b> C'est d'ici que partent les grandes décisions et les renforts pour l'Opération Harpie. Le paradoxe est fort : cet aéroport moderne est à seulement quelques centaines de kilomètres en hélicoptère des pires conditions de survie et de saccage écologique de la forêt amazonienne." 
+            },
+            "camopi": { 
+                name: "Aérodrome de Camopi", 
+                coords: [3.1722, -52.3361], 
+                desc: "<b>Statut:</b> Piste Enclavée | <b>Rôle:</b> Ravitaillement et Protection Frontalière<br><br><b>Accès :</b> Uniquement par les airs ou le fleuve Oyapock.<br><br><b>Contexte GSS :</b> Situé à la frontière brésilienne, cet aérodrome est vital. Il permet aux forces armées de se déployer rapidement pour tenter de bloquer les flux incessants de garimpeiros qui traversent clandestinement le fleuve pour piller le Parc Amazonien." 
+            },
+            "grand-santi": { 
+                name: "Aérodrome de Grand-Santi", 
+                coords: [4.2833, -54.3811], 
+                desc: "<b>Statut:</b> Aérodrome Fluvial | <b>Rôle:</b> Pont Aérien de l'Ouest<br><br><b>Accès :</b> Enclavement total sur le fleuve Maroni.<br><br><b>Contexte GSS :</b> Sans cette courte piste, le contrôle de cette immense zone de transit de l'or illégal serait impossible. Les hélicoptères militaires l'utilisent comme relais stratégique pour surveiller les mouvements de pirogues clandestines." 
+            },
+            "kourou": { 
+                name: "Aérodrome de Kourou", 
+                coords: [5.1736, -52.6914], 
+                desc: "<b>Statut:</b> Piste Stratégique | <b>Rôle:</b> Support Aérospatial et Militaire<br><br><b>Accès :</b> Zone littorale hautement sécurisée.<br><br><b>Contexte GSS :</b> Proche du Centre Spatial Guyanais. Ce lieu symbolise le contraste absolu de la Guyane : la haute technologie de pointe européenne sous très haute surveillance, face à une exploitation archaïque et destructrice de la forêt quelques kilomètres plus loin." 
+            },
+            "maripasoula": { 
+                name: "Aérodrome de Maripasoula", 
+                coords: [3.6575, -54.0372], 
+                desc: "<b>Statut:</b> Hub Logistique Avancé | <b>Rôle:</b> Base Arrière (Harpie)<br><br><b>Accès :</b> Le cordon ombilical de la plus vaste commune de France.<br><br><b>Contexte GSS :</b> C'est le véritable centre névralgique de la lutte anti-orpaillage dans l'Ouest. Cette piste voit quotidiennement transiter des troupes engagées dans la destruction des chantiers clandestins (comme Yaou ou Dorlin) et du matériel confisqué." 
+            },
+            "ouanary": { 
+                name: "Aérodrome d'Ouanary", 
+                coords: [4.2100, -51.6678], 
+                desc: "<b>Statut:</b> Piste Ultra-Isolée | <b>Rôle:</b> Désenclavement de l'Est<br><br><b>Accès :</b> Zone marécageuse et forestière complexe.<br><br><b>Contexte GSS :</b> Illustre les défis immenses de l'État en Guyane. La rareté et la petite taille de ces pistes à l'Est rendent la surveillance aérienne extrêmement complexe face à l'immensité du territoire forestier." 
+            },
+            "regina": { 
+                name: "Aérodrome de Régina", 
+                coords: [4.3147, -52.1317], 
+                desc: "<b>Statut:</b> Aérodrome Forestier | <b>Rôle:</b> Accès bassin Approuague<br><br><b>Accès :</b> Est de la Guyane.<br><br><b>Contexte GSS :</b> Situé près du fleuve Approuague, historiquement très touché par la fièvre de l'or. La piste sert de base de repli et de ravitaillement rapide pour les forces de l'ordre après de longues et éprouvantes missions en forêt profonde." 
+            },
+            "st-georges": { 
+                name: "Aérodrome de St-Georges", 
+                coords: [3.8933, -51.8056], 
+                desc: "<b>Statut:</b> Piste Frontalière | <b>Rôle:</b> Surveillance de l'Oyapock<br><br><b>Accès :</b> Face au Brésil, rive du fleuve Oyapock.<br><br><b>Contexte GSS :</b> Crucial pour le déploiement rapide des gendarmes. Ils doivent lutter contre la logistique des garimpeiros, dont les bases arrière de ravitaillement en mercure, carburant et nourriture se trouvent juste en face, sur la rive brésilienne." 
+            },
+            "st-laurent": { 
+                name: "Aérodrome de St-Laurent", 
+                coords: [5.4831, -54.0344], 
+                desc: "<b>Statut:</b> Aéroport Régional | <b>Rôle:</b> Hub du Nord-Ouest<br><br><b>Accès :</b> Porte d'entrée routière et aérienne de l'Ouest guyanais.<br><br><b>Contexte GSS :</b> Ville frontière avec le Suriname. Les opérations de contrôle fluvial (intercepter les pirogues taxi ravitaillant les chantiers clandestins le long du Maroni) dépendent souvent de la surveillance aérienne déclenchée depuis cette piste." 
+            },
+            "saul": { 
+                name: "Aérodrome de Saül", 
+                coords: [3.6136, -53.2042], 
+                desc: "<b>Statut:</b> Piste Vitale | <b>Rôle:</b> Survie Civile & Protection Écotourisme<br><br><b>Accès :</b> Au centre de la Guyane, aucune route existante.<br><br><b>Contexte GSS :</b> C'est le seul moyen d'accès pour ce village isolé qui vit de l'écotourisme durable. La piste est massivement utilisée par la gendarmerie pour tenter de protéger ce sanctuaire naturel, constamment encerclé et menacé par les sites clandestins voisins." 
+            },
+            "sinnamary": { 
+                name: "Aérodrome de Sinnamary", 
+                coords: [5.3736, -52.9456], 
+                desc: "<b>Statut:</b> Piste d'Appoint | <b>Rôle:</b> Sécurité zone barrage<br><br><b>Accès :</b> Proche du barrage de Petit-Saut.<br><br><b>Contexte GSS :</b> Permet le survol rapide de l'immense lac artificiel du barrage de Petit-Saut. Cette zone inondée, parsemée d'arbres morts, est difficilement navigable. Les orpailleurs y installent parfois des barges clandestines pour filtrer la boue aurifère en toute discrétion." 
+            }
+        };
+
+        const airportMarkersList = {};
+        for (let key in airportsData) {
+            let airport = airportsData[key];
+            let marker = L.circleMarker(airport.coords, {
+                color: '#0033cc',
+                fillColor: '#009ce0',
+                fillOpacity: 0.9,
+                radius: 6
+            }).addTo(map);
+            marker.bindPopup(`<b>${airport.name}</b>`);
+            airportMarkersList[key] = marker;
+        }
+
+        // menues
+        function remplirMenus() {
+            let selectSites = document.getElementById('select-sites');
+            for(let key in sitesData) {
+                selectSites.innerHTML += `<option value="${key}">${sitesData[key].name}</option>`;
+            }
+
+            let selectAirports = document.getElementById('select-aeroports');
+            for(let key in airportsData) {
+                selectAirports.innerHTML += `<option value="${key}">${airportsData[key].name}</option>`;
+            }
+
+            let selectVilles = document.getElementById('select-villes');
+            for(let key in citiesData) {
+                selectVilles.innerHTML += `<option value="${key}">${citiesData[key].name}</option>`;
+            }
+        }
+        remplirMenus();
+
+        // zoom sur ville / site / aeroport séléctionné
+        function allerVersLieu(type, key) {
+            if(!key) return;
+            let dataObj, markerObj;
+
+            if (type === 'site') {
+                dataObj = sitesData[key];
+                markerObj = markersList[key];
+                document.getElementById('select-aeroports').selectedIndex = 0;
+                document.getElementById('select-villes').selectedIndex = 0;
+            } else if (type === 'airport') {
+                dataObj = airportsData[key];
+                markerObj = airportMarkersList[key];
+                document.getElementById('select-sites').selectedIndex = 0;
+                document.getElementById('select-villes').selectedIndex = 0;
+            } else if (type === 'city') {
+                dataObj = citiesData[key];
+                markerObj = cityMarkersList[key];
+                document.getElementById('select-sites').selectedIndex = 0;
+                document.getElementById('select-aeroports').selectedIndex = 0;
+            }
+
+            map.setView(dataObj.coords, 12);
+            markerObj.openPopup();
+
+            document.getElementById('desc-title').innerText = dataObj.name;
+            document.getElementById('desc-text').innerHTML = dataObj.desc;
+            document.getElementById('description-container').style.display = 'block';
+        }
+
+        // filtres par catégorie ville / site / aeroport
+        function filtrerCarte(categorie, boutonClique) {
+            let boutons = document.querySelectorAll('.filter-btn');
+            boutons.forEach(btn => btn.classList.remove('active'));
+            if(boutonClique) boutonClique.classList.add('active');
+
+            for (let key in markersList) {
+                if (categorie === 'tout' || categorie === 'sites') map.addLayer(markersList[key]); 
+                else map.removeLayer(markersList[key]);
+            }
+            for (let key in airportMarkersList) {
+                if (categorie === 'tout' || categorie === 'aeroports') map.addLayer(airportMarkersList[key]);
+                else map.removeLayer(airportMarkersList[key]);
+            }
+            for (let key in cityMarkersList) {
+                if (categorie === 'tout' || categorie === 'villes') map.addLayer(cityMarkersList[key]);
+                else map.removeLayer(cityMarkersList[key]);
+            }
+        }
+
+        /* Quiz questions */
+        const questions = [
+            { q: "Dans quelle région française l'orpaillage illégal est-il un problème majeur ?", answers: ["La Guyane", "La Guadeloupe", "La Réunion"], correct: 0 },
+            { q: "Quel métal est recherché par les orpailleurs ?", answers: ["Le cuivre", "L'or", "L'argent"], correct: 1 },
+            { q: "Quel produit toxique est souvent utilisé pour extraire l'or ?", answers: ["Mercure", "Chlore", "Sel"], correct: 0 },
+            { q: "Quel type de forêt est principalement touché par l'orpaillage en Guyane ?", answers: ["La forêt boréale", "La forêt méditerranéenne", "La forêt amazonienne"], correct: 2 },
+            { q: "L'orpaillage illégal est-il autorisé par la loi ?", answers: ["Oui, si on a une autorisation de la mairie", "Non, il est totalement interdit et puni par la loi"], correct: 1 },
+            { q: "Quelle est l'une des principales conséquences de l'orpaillage sur les forêts ?", answers: ["L'apparition de nouvelles espèces d'arbres", "La déforestation et la destruction des sols", "L'augmentation des précipitations"], correct: 1 },
+            { q: "Pourquoi le mercure est-il dangereux pour les rivières ?", answers: ["Il empoisonne l'eau", "Il rend l'eau trop salée", "Il fait s'évaporer l'eau trop rapidement"], correct: 0 },
+            { q: "Quels êtres vivants sont menacés par la pollution liée à l'orpaillage ?", answers: ["Les ours polaires et les pingouins", "Uniquement les insectes sauvages", "Les poissons, les animaux terrestres et les populations humaines"], correct: 2 },
+            { q: "Comment appelle-t-on les populations autochtones vivant en Guyane ?", answers: ["Les Inuits", "Les Amérindiens", "Les Mayas"], correct: 1 },
+            { q: "Pourquoi la biodiversité de Guyane est-elle fragile ?", answers: ["Parce qu'il y a trop peu d'arbres", "Parce que le climat y est trop froid", "Parce que de nombreuses espèces uniques dépendent d'un écosystème intact pour survivre"], correct: 2 }
+        ];
+
+        let currentIndex = 0; let score = 0; let answered = false;
+
+        function render() {
+            const body = document.getElementById('quiz-body');
+            if (currentIndex >= questions.length) { renderResult(body); return; }
+            const q = questions[currentIndex];
+            const pct = (currentIndex / questions.length) * 100;
+            document.getElementById('quiz-progress').style.width = pct + '%';
+
+            body.innerHTML = `
+                <div class="quiz-question-num">${currentIndex + 1} / ${questions.length}</div>
+                <p class="quiz-question-text">${q.q}</p>
+                <div class="quiz-answers" id="quiz-answers"></div>
+                <div class="quiz-feedback" id="quiz-feedback"></div>
+                <button class="quiz-next-btn" id="quiz-next-btn" onclick="nextQuestion()">
+                    ${currentIndex + 1 < questions.length ? 'Question suivante →' : 'Voir mon résultat →'}
+                </button>
+            `;
+
+            const container = document.getElementById('quiz-answers');
+            q.answers.forEach((a, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'quiz-answer-btn';
+                btn.textContent = a;
+                btn.onclick = () => selectAnswer(i);
+                container.appendChild(btn);
+            });
+            answered = false;
+        }
+
+        function selectAnswer(i) {
+            if (answered) return; answered = true;
+            const q = questions[currentIndex];
+            const btns = document.querySelectorAll('.quiz-answer-btn');
+            const fb = document.getElementById('quiz-feedback');
+
+            btns.forEach((btn, idx) => {
+                btn.disabled = true;
+                if (idx === q.correct) { btn.classList.add(i === q.correct ? 'correct' : 'reveal-correct'); } 
+                else if (idx === i) { btn.classList.add('incorrect'); }
+            });
+
+            if (i === q.correct) { score++; fb.className = 'quiz-feedback good'; fb.textContent = '✓ Bonne réponse !'; } 
+            else { fb.className = 'quiz-feedback bad'; fb.textContent = '✗ Mauvaise réponse. La bonne réponse est surlignée.'; }
+            
+            fb.style.display = 'block'; document.getElementById('quiz-next-btn').style.display = 'block';
+        }
+
+        function nextQuestion() { currentIndex++; render(); }
+
+        function renderResult(body) {
+            const pct = Math.round((score / questions.length) * 100);
+            document.getElementById('quiz-progress').style.width = '100%';
+            let msg = '';
+            if (pct >= 80) msg = 'Excellent ! Vous maîtrisez les enjeux de l\'orpaillage en Guyane.';
+            else if (pct >= 50) msg = 'Pas mal ! Vous avez de bonnes bases sur ce sujet important.';
+            else msg = 'Continuez à vous informer sur les enjeux environnementaux de la Guyane !';
+
+            const scoreGlobal = document.getElementById('score-global');
+            document.getElementById('score-display').textContent = score + ' / ' + questions.length;
+            scoreGlobal.style.display = 'inline-flex';
+
+            body.innerHTML = `
+                <div class="quiz-result">
+                    <div class="quiz-result__score">${score}/${questions.length}</div>
+                    <div class="quiz-result__pct">${pct}% de bonnes réponses</div>
+                    <div class="quiz-result__msg">${msg}</div>
+                    <button class="quiz-restart-btn" onclick="restart()">Recommencer le quiz</button>
+                </div>
+            `;
+        }
+
+        function restart() { currentIndex = 0; score = 0; answered = false; document.getElementById('score-global').style.display = 'none'; render(); }
+
+        render(); 
+    </script>
+
 </body>
 </html>
